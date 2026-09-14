@@ -2,20 +2,26 @@
   <div class="shell">
     <header class="topbar">
       <div class="page-wrap bar-inner">
-        <BrandLockup size="sm" />
-        <nav>
-          <router-link to="/">首页</router-link>
-          <div class="account">
-            <button type="button" class="account-btn">
-              {{ username }}<i v-if="!isAdmin">只读</i>
-            </button>
-            <div class="account-menu">
-              <router-link to="/logs">日志</router-link>
-              <router-link to="/settings">设置</router-link>
-              <button type="button" @click="logout">退出</button>
-            </div>
+        <router-link to="/" class="brand-link" title="返回首页">
+          <BrandLockup size="sm" />
+        </router-link>
+        <div class="account">
+          <button type="button" class="account-btn">
+            <span class="avatar">{{ avatarText }}</span>
+            <span class="meta">
+              <strong>{{ username }}</strong>
+              <em>{{ isAdmin ? "管理员" : "只读" }}</em>
+            </span>
+            <svg class="caret" viewBox="0 0 12 12" aria-hidden="true">
+              <path d="M3 4.5L6 8l3-3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          <div class="account-menu">
+            <router-link to="/logs">日志</router-link>
+            <router-link to="/settings">设置</router-link>
+            <button type="button" class="logout" @click="logout">退出</button>
           </div>
-        </nav>
+        </div>
       </div>
     </header>
     <main class="main">
@@ -42,6 +48,10 @@ const router = useRouter();
 const username = ref("");
 const role = ref("admin");
 const isAdmin = computed(() => role.value === "admin");
+const avatarText = computed(() => {
+  const name = String(username.value || "U").trim();
+  return name ? name.slice(0, 1).toUpperCase() : "U";
+});
 try {
   const cached = JSON.parse(getStore("user") || "{}");
   username.value = cached.username || "";
@@ -93,29 +103,13 @@ function logout() {
   align-items: center;
   justify-content: space-between;
 }
-nav { display: flex; align-items: center; gap: 6px; }
-nav > a,
-.account-menu a,
-.account-menu button,
-.account-btn {
-  height: 32px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: #4e5969;
-  cursor: pointer;
-  font-size: 14px;
-  line-height: 32px;
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 10px;
 }
-nav > a.router-link-exact-active {
-  background: #e8f1ff;
-  color: #2f6bff;
-  font-weight: 600;
-}
-nav > a:hover {
-  background: #f5f7fa;
-  color: #1f2329;
+.brand-link:hover :deep(.lockup) {
+  opacity: 0.82;
 }
 .account {
   position: relative;
@@ -123,40 +117,97 @@ nav > a:hover {
   margin-bottom: -8px;
 }
 .account-btn {
-  background: #f5f7fa;
-  color: #64748b;
-  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 10px 0 6px;
+  border: 1px solid #e8eef6;
+  border-radius: 999px;
+  background: #f7f9fc;
+  color: #334155;
+  cursor: pointer;
 }
-.account-btn i {
+.account-btn:hover,
+.account:hover .account-btn {
+  border-color: #d7e3f7;
+  background: #eef4ff;
+}
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #2f6bff;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.15;
+  min-width: 0;
+}
+.meta strong {
+  font-size: 13px;
+  font-weight: 650;
+  color: #1f2329;
+}
+.meta em {
   font-style: normal;
-  margin-left: 6px;
-  color: #2f6bff;
+  font-size: 11px;
+  color: #94a3b8;
+}
+.caret {
+  width: 12px;
+  height: 12px;
+  color: #94a3b8;
 }
 .account-menu {
   display: none;
   position: absolute;
-  top: 100%;
+  top: calc(100% - 2px);
   right: 0;
-  min-width: 120px;
-  padding: 6px;
-  border: 1px solid #ebeef5;
-  border-radius: 10px;
+  min-width: 148px;
+  padding: 8px;
+  border: 1px solid #e8eef6;
+  border-radius: 12px;
   background: #fff;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
   z-index: 30;
 }
 .account-menu a,
 .account-menu button {
   display: block;
   width: 100%;
-  text-align: left;
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
   background: transparent;
+  color: #334155;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 36px;
+  text-align: left;
 }
 .account-menu a.router-link-active,
 .account-menu a:hover,
 .account-menu button:hover {
-  background: #f5f7fa;
-  color: #1f2329;
+  background: #f4f8ff;
+  color: #2f6bff;
+}
+.account-menu .logout {
+  margin-top: 4px;
+  color: #b45309;
+}
+.account-menu .logout:hover {
+  background: #fff7ed;
+  color: #c2410c;
 }
 .account:hover .account-menu,
 .account:focus-within .account-menu {
@@ -164,6 +215,6 @@ nav > a:hover {
 }
 .main {
   flex: 1;
-  padding: 22px 0 36px;
+  padding: 22px 0 28px;
 }
 </style>

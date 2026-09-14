@@ -45,8 +45,8 @@
           <p>检索漏洞、手动补推、查看运行日志，并在页面里管理监控与推送配置。</p>
         </div>
       </div>
-      <AppFooter />
     </div>
+    <AppFooter />
     <div v-if="toast" class="toast-wrap"><div class="toast error">{{ toast }}</div></div>
   </div>
 </template>
@@ -95,16 +95,21 @@ async function onLogin() {
   min-height: 100vh;
   background: #f5f7fa;
   display: flex;
-  justify-content: center;
-  padding: 48px 20px 24px;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 20px 0;
   box-sizing: border-box;
 }
 .login-wrap {
   width: 100%;
   max-width: 1080px;
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+.login-page :deep(.app-footer) {
+  align-self: stretch;
 }
 .hero {
   display: flex;
