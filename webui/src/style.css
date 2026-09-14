@@ -181,18 +181,20 @@ a { color: inherit; text-decoration: none; }
 
 .toast-wrap {
   position: fixed;
-  top: 18px;
+  top: 72px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 80;
+  z-index: 200;
 }
 .toast {
-  min-width: 220px;
-  padding: 10px 16px;
-  border-radius: 8px;
+  min-width: 240px;
+  padding: 12px 20px;
+  border-radius: 999px;
   background: #1f2329;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
   box-shadow: 0 10px 24px rgba(0,0,0,0.16);
 }
 .toast.error { background: #b91c1c; }

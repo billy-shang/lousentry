@@ -8,6 +8,7 @@ lousentry
 watchvuln
 webui/node_modules
 webui/dist
+image
 tmp_query.py
 *.md
 !README.md

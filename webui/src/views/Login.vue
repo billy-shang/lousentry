@@ -46,6 +46,7 @@
         </div>
       </div>
     </div>
+    <AppFooter />
     <div v-if="toast" class="toast-wrap"><div class="toast error">{{ toast }}</div></div>
   </div>
 </template>
@@ -56,6 +57,7 @@ import { useRouter } from "vue-router";
 import http, { errMsg } from "../api";
 import { getStore, setStore } from "../storage";
 import BrandLockup from "../components/BrandLockup.vue";
+import AppFooter from "../components/AppFooter.vue";
 
 const router = useRouter();
 const loading = ref(false);
@@ -93,13 +95,15 @@ async function onLogin() {
   min-height: 100vh;
   background: #f5f7fa;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  padding: 48px 20px 40px;
+  padding: 48px 20px 16px;
   box-sizing: border-box;
 }
 .login-wrap {
   width: 100%;
   max-width: 1080px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;

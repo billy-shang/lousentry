@@ -62,10 +62,10 @@
 
       <div v-if="tab === 'push'" class="form-card">
         <h3>推送渠道</h3>
-        <p class="hint">Webhook 保存在 SQLite。保存后立即生效：之后自动检查到的新漏洞、以及首页的「立即检查 / 手动推送」，都会发到已启用的渠道。</p>
+        <p class="hint">Webhook 保存在 SQLite。勾选或取消渠道后，必须点击「保存配置」才会写入并生效；只改勾选不会立刻停用或启用推送。</p>
         <div class="channel">
           <label class="check channel-check">
-            <input type="checkbox" :disabled="!isAdmin" v-model="push.dingding.enabled" @change="onChannelToggle('dingding')" />
+            <input type="checkbox" :disabled="!isAdmin" v-model="push.dingding.enabled" />
             钉钉
           </label>
           <div v-if="push.dingding.enabled" class="channel-body">
@@ -75,7 +75,7 @@
         </div>
         <div class="channel">
           <label class="check channel-check">
-            <input type="checkbox" :disabled="!isAdmin" v-model="push.lark.enabled" @change="onChannelToggle('lark')" />
+            <input type="checkbox" :disabled="!isAdmin" v-model="push.lark.enabled" />
             飞书
           </label>
           <div v-if="push.lark.enabled" class="channel-body">
@@ -85,7 +85,7 @@
         </div>
         <div class="channel">
           <label class="check channel-check">
-            <input type="checkbox" :disabled="!isAdmin" v-model="push.wechatwork.enabled" @change="onChannelToggle('wechatwork')" />
+            <input type="checkbox" :disabled="!isAdmin" v-model="push.wechatwork.enabled" />
             企业微信
           </label>
           <div v-if="push.wechatwork.enabled" class="channel-body">
@@ -93,7 +93,7 @@
           </div>
         </div>
         <div v-if="isAdmin" class="actions">
-          <button class="btn" type="button" :disabled="busy" @click="savePush">保存推送配置</button>
+          <button class="btn" type="button" :disabled="busy" @click="savePush">保存配置</button>
           <button class="btn ghost" type="button" :disabled="busy" @click="testPush">测试推送</button>
         </div>
       </div>
@@ -242,24 +242,6 @@ function applyPush(data) {
   push.wechatwork.key = (data.wechatwork && data.wechatwork.key) || "";
 }
 
-function clearChannel(name) {
-  if (name === "wechatwork") {
-    push.wechatwork.key = "";
-    return;
-  }
-  push[name].access_token = "";
-  push[name].sign_secret = "";
-}
-
-async function onChannelToggle(name) {
-  if (push[name].enabled) return;
-  clearChannel(name);
-  if (!isAdmin.value) return;
-  await savePush(true);
-  toast("已删除该渠道的 Webhook 配置");
-  console.log("[settings] 已删除渠道配置", name);
-}
-
 function roleLabel(role) {
   return role === "readonly" ? "只读" : "管理员";
 }
@@ -283,7 +265,7 @@ async function saveMonitor() {
     monitor.white_keywords = splitLines(whiteText.value);
     monitor.black_keywords = splitLines(blackText.value);
     await http.put("/settings", monitor);
-    toast("监控设置已保存");
+    toast("配置已保存");
     console.log("[settings] 监控设置已保存", monitor);
     stats.value = (await http.get("/stats")).data || {};
   } catch (e) {
@@ -293,13 +275,13 @@ async function saveMonitor() {
   }
 }
 
-async function savePush(silent) {
+async function savePush() {
   busy.value = true;
   try {
     await http.put("/push", push);
     const latest = await http.get("/push");
     applyPush(latest.data || {});
-    if (!silent) toast("推送设置已保存到 SQLite");
+    toast("配置已保存");
     console.log("[settings] 推送设置已写入 sqlite");
   } catch (e) {
     toast(errMsg(e), "error");

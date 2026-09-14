@@ -19,6 +19,7 @@ RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -extldflags=-static" -o mai
 FROM alpine:3
 
 LABEL org.opencontainers.image.title="漏哨 LouSentry"
+LABEL org.opencontainers.image.version="v1.0.01"
 LABEL org.opencontainers.image.description="采集高价值漏洞并推送到钉钉 / 飞书 / 企业微信"
 
 RUN apk add --update tzdata && \

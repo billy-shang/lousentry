@@ -17,6 +17,7 @@
         <router-view />
       </div>
     </main>
+    <AppFooter />
     <div v-if="toast" class="toast-wrap">
       <div class="toast" :class="toast.type">{{ toast.text }}</div>
     </div>
@@ -29,6 +30,7 @@ import { useRouter } from "vue-router";
 import http from "../api";
 import { getStore, setStore, removeStore } from "../storage";
 import BrandLockup from "../components/BrandLockup.vue";
+import AppFooter from "../components/AppFooter.vue";
 
 const router = useRouter();
 const username = ref("");
@@ -47,7 +49,7 @@ let timer = null;
 function showToast(text, type = "success") {
   toast.value = { text, type };
   clearTimeout(timer);
-  timer = setTimeout(() => { toast.value = null; }, 2600);
+  timer = setTimeout(() => { toast.value = null; }, 3600);
 }
 
 provide("toast", showToast);
