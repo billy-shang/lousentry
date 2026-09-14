@@ -1,0 +1,20 @@
+services:
+  lousentry:
+    image: ${LOUSENTRY_IMAGE:-billyshang/lousentry:latest}
+    build: .
+    container_name: lousentry
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      LISTEN: ":8080"
+      DB_CONN: sqlite3://data/vuln_v3.sqlite3
+      INTERVAL: 30m
+      NO_START_MESSAGE: "true"
+      ADMIN_USER: admin
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-admin123}
+    volumes:
+      - lousentry-data:/app/data
+
+volumes:
+  lousentry-data:

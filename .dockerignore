@@ -1,0 +1,17 @@
+.git
+.github
+data
+*.sqlite3
+*.sqlite3-journal
+*.exe
+lousentry
+watchvuln
+webui/node_modules
+webui/dist
+tmp_query.py
+*.md
+!README.md
+.idea
+.DS_Store
+testdata
+*backup

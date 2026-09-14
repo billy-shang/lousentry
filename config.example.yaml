@@ -1,0 +1,29 @@
+db_conn: sqlite3://vuln_v3.sqlite3
+interval: 30m
+listen: ":8080"
+sources: [ "avd", "chaitin", "ti", "oscs", "threatbook", "seebug", "struts2", "kev", "venustech" ]
+enable_cve_filter: true
+no_github_search: false
+no_start_message: false
+no_sleep: false
+no_filter: false
+diff_mode: false
+white_keywords: [ ]
+black_keywords: [ ]
+skip_tls_verify: false
+proxy: ""
+
+# 使用 Web 控制台时，钉钉 / 飞书 / 企业微信 webhook 保存在 SQLite 表 web_pushers，
+# 请在「设置 → 推送设置」里填写，不要把密钥长期放在 yaml。
+# 下面三项仅作为无控制台启动时的引导配置。
+pusher:
+  - type: dingding
+    access_token: ""
+    sign_secret: ""
+
+  - type: lark
+    access_token: ""
+    sign_secret: ""
+
+  - type: wechatwork
+    key: ""
