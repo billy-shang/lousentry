@@ -209,14 +209,16 @@ Docker 方式推荐使用环境变量来配置服务参数
 
 ```bash
 docker run --restart always -d \
+  -p 8080:8080 \
   -e DINGDING_ACCESS_TOKEN=xxxx \
   -e DINGDING_SECRET=xxxx \
   -e INTERVAL=30m \
   -e ENABLE_CVE_FILTER=true \
+  -v lousentry-data:/app/data \
   billyshang/lousentry:latest
 ```
 
-当然，你可以仓靠使用本仓库的 `docker-compose.yaml` 文件，使用 `docker-compose` 来启动容器。
+也可以直接用仓库里的 `docker-compose.yaml` 启动。数据卷 `lousentry-data` 会持久化 SQLite，升级镜像后账号和推送配置还在。
 
 每次更新记得重新拉镜像:
 
