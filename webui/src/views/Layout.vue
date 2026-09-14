@@ -4,11 +4,17 @@
       <div class="page-wrap bar-inner">
         <BrandLockup size="sm" />
         <nav>
-          <span class="who">{{ username }}<i v-if="!isAdmin">只读</i></span>
           <router-link to="/">首页</router-link>
-          <router-link to="/logs">日志</router-link>
-          <router-link to="/settings">设置</router-link>
-          <button type="button" @click="logout">退出</button>
+          <div class="account">
+            <button type="button" class="account-btn">
+              {{ username }}<i v-if="!isAdmin">只读</i>
+            </button>
+            <div class="account-menu">
+              <router-link to="/logs">日志</router-link>
+              <router-link to="/settings">设置</router-link>
+              <button type="button" @click="logout">退出</button>
+            </div>
+          </div>
         </nav>
       </div>
     </header>
@@ -88,22 +94,10 @@ function logout() {
   justify-content: space-between;
 }
 nav { display: flex; align-items: center; gap: 6px; }
-.who {
-  margin-right: 6px;
-  padding: 0 10px;
-  height: 28px;
-  line-height: 28px;
-  border-radius: 8px;
-  background: #f5f7fa;
-  color: #64748b;
-  font-size: 12px;
-}
-.who i {
-  font-style: normal;
-  margin-left: 6px;
-  color: #2f6bff;
-}
-nav a, nav button {
+nav > a,
+.account-menu a,
+.account-menu button,
+.account-btn {
   height: 32px;
   padding: 0 12px;
   border: 0;
@@ -114,15 +108,59 @@ nav a, nav button {
   font-size: 14px;
   line-height: 32px;
 }
-nav a.router-link-exact-active {
+nav > a.router-link-exact-active {
   background: #e8f1ff;
   color: #2f6bff;
   font-weight: 600;
 }
-nav a:hover,
-nav button:hover {
+nav > a:hover {
   background: #f5f7fa;
   color: #1f2329;
+}
+.account {
+  position: relative;
+  padding-bottom: 8px;
+  margin-bottom: -8px;
+}
+.account-btn {
+  background: #f5f7fa;
+  color: #64748b;
+  font-size: 13px;
+}
+.account-btn i {
+  font-style: normal;
+  margin-left: 6px;
+  color: #2f6bff;
+}
+.account-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 120px;
+  padding: 6px;
+  border: 1px solid #ebeef5;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  z-index: 30;
+}
+.account-menu a,
+.account-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+}
+.account-menu a.router-link-active,
+.account-menu a:hover,
+.account-menu button:hover {
+  background: #f5f7fa;
+  color: #1f2329;
+}
+.account:hover .account-menu,
+.account:focus-within .account-menu {
+  display: block;
 }
 .main {
   flex: 1;

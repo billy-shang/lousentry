@@ -187,18 +187,21 @@ a { color: inherit; text-decoration: none; }
   z-index: 200;
 }
 .toast {
-  min-width: 240px;
-  padding: 12px 20px;
+  min-width: 0;
+  padding: 7px 14px;
   border-radius: 999px;
-  background: #1f2329;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
+  background: #86efac;
+  color: #166534;
+  font-size: 12px;
+  font-weight: 500;
   text-align: center;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.16);
+  box-shadow: 0 8px 18px rgba(22, 101, 52, 0.12);
 }
-.toast.error { background: #b91c1c; }
-.toast.success { background: #15803d; }
+.toast.error {
+  background: #fecaca;
+  color: #991b1b;
+  box-shadow: 0 8px 18px rgba(153, 27, 27, 0.1);
+}
 
 .modal-mask {
   position: fixed;

@@ -1,6 +1,6 @@
 # 漏哨 LouSentry
 
-当前版本：**v1.0.01**
+当前版本：**v1.0.02**
 
 采集高价值漏洞，按周期检查并推送到钉钉 / 飞书 / 企业微信。
 
@@ -36,48 +36,11 @@ CVE 库里绝大多数编号并没有现实威胁。这个项目从部分高质�
 
 ## Web 控制台
 
-从 `v2.8.0` 起内置 Web 控制台，默认监听 `:8080`。打开浏览器访问 `http://服务器IP:8080` 即可登录。
-
+内置 Web 控制台，默认监听 `:8080`。打开浏览器访问 `http://服务器IP:8080` 即可登录。
 
 默认账号：
-
 - 用户名：`admin`
 - 密码：`admin123`（建议登录后立刻在「设置 → 账户安全」修改，也可在此添加更多登录账号）
-
-界面与登录页统一为浅灰底、蓝色主色、白顶栏和白卡片。品牌锁头横排显示「漏哨 LouSentry」，中英字号相同。页脚显示 `漏哨 LouSentry v1.0.01` 和 GitHub 项目地址。
-
-控制台功能：
-
-| 页面 | 说明 |
-| --- | --- |
-| 首页 | 查看今日新增、已推送/未推送统计，检索漏洞（按入库时间倒序，今日新增在最前并带「今日」标记），查看详情，手动推送，发送每日报告；可看到下次检查时间并立刻检查 |
-| 日志 | 查看采集与推送运行日志，可按级别筛选 |
-| 设置 / 监控设置 | 调整检查周期、数据源、黑白名单、过滤策略、代理 |
-| 设置 / 推送设置 | 配置钉钉、飞书、企业微信机器人，勾选或取消后需点击「保存配置」才生效 |
-| 设置 / 账户安全 | 添加/删除登录账号（管理员 / 只读），修改当前账号密码 |
-
-检查与自动推送：
-
-1. **启动建库**：第一次启动会把各数据源当前页面的漏洞写入 SQLite，这一步**不推送**历史漏洞。
-2. **周期检查**：建库完成后立刻做一轮增量检查，之后按「检查间隔」（默认 30 分钟）循环抓取。00:00-07:00 默认休眠，可在监控设置里关闭。
-3. **自动告警**：某一轮检查到「新出现」或「等级/标签升级」的漏洞，且通过高价值/黑白名单等策略后，会**自动推送**到已启用的钉钉、飞书、企业微信 Webhook，并标记为已推送（同一 CVE 默认只推一次）。
-4. **手动补推**：首页可以把未推送的漏洞再发一遍，或发送每日报告；这不影响自动检查。
-
-相关环境变量 / 参数：
-
-| 环境变量 | 命令行 | 说明 | 默认值 |
-| --- | --- | --- | --- |
-| `LISTEN` | `--listen` / `-l` | 控制台监听地址，设为 `off` 可关闭 | `:8080` |
-| `ADMIN_USER` | `--admin-user` | 控制台用户名 | `admin` |
-| `ADMIN_PASSWORD` | `--admin-pass` | 首次启动或重置密码时使用 | `admin123` |
-
-登录账号、监控设置、钉钉/飞书/企业微信 webhook 都保存在 **SQLite**（与漏洞库同一数据库，默认 `data/vuln_v3.sqlite3`）：
-
-- `web_users`：控制台登录账号和权限（`admin` / `readonly`）
-- `web_settings`：监控设置、登录令牌密钥
-- `web_pushers`：钉钉 / 飞书 / 企业微信的 webhook、加签 Secret、机器人 Key
-
-控制台账号、监控设置和钉钉/飞书/企业微信 webhook 只写 SQLite，不再使用 `data/app.yaml`。无控制台启动时仍可用 `-c config.yaml`。未配置任何推送渠道时也可以先打开控制台，再在页面里补齐。
 
 ![登录页](image/001.png)
 
@@ -86,62 +49,6 @@ CVE 库里绝大多数编号并没有现实威胁。这个项目从部分高质�
 ![监控设置](image/003.png)
 
 ![推送设置](image/004.png)
-
-## 如何启动
-
-需要本机已安装 **Go 1.21+**、**Node.js 20+**。PowerShell 里不要把多条命令用 `&&` 连在一起。
-
-### 日常使用（推荐）
-
-仓库里已有前端产物时，在项目根目录执行：
-
-```powershell
-cd d:\CURSOR\LouSentry
-.\lousentry.exe --listen :8080 --db-conn sqlite3://data/vuln_v3.sqlite3 --no-start-message --interval 30m
-```
-
-没有 `lousentry.exe` 时先编译再启动：
-
-```powershell
-cd d:\CURSOR\LouSentry\webui
-npm install
-npm run build
-cd d:\CURSOR\LouSentry
-go build -o lousentry.exe .
-.\lousentry.exe --listen :8080 --db-conn sqlite3://data/vuln_v3.sqlite3 --no-start-message --interval 30m
-```
-
-浏览器打开 `http://127.0.0.1:8080`，默认账号 `admin` / `admin123`。钉钉 / 飞书 / 企业微信可在「设置 → 推送设置」里再配。
-
-改过 `webui` 后必须重新 `npm run build`，再 `go build -o lousentry.exe .`，然后重启进程，最后 **Ctrl+F5**。
-
-### 开发前端
-
-开两个终端。后端：
-
-```powershell
-cd d:\CURSOR\LouSentry
-go run . --listen :8080 --db-conn sqlite3://data/vuln_v3.sqlite3 --no-start-message --interval 30m
-```
-
-前端（Vite 会把 `/api` 代理到 8080）：
-
-```powershell
-cd d:\CURSOR\LouSentry\webui
-npm install
-npm run dev
-```
-
-开发时访问 Vite 给出的地址（一般是 `http://127.0.0.1:5173`）。
-
-### 不编译、直接跑
-
-```powershell
-cd d:\CURSOR\LouSentry
-go run . --listen :8080 --db-conn sqlite3://data/vuln_v3.sqlite3 --no-start-message --interval 30m
-```
-
-这种方式仍依赖已经构建好的 `webui/dist`（由 `//go:embed` 打进程序）。`dist` 不存在或过旧时，控制台页面会空白或还是旧界面。
 
 ## Docker 部署
 
@@ -163,17 +70,3 @@ docker run -d --name lousentry --restart unless-stopped \
 ```powershell
 docker compose up -d
 ```
-
-浏览器打开 `http://服务器IP:8083`，默认账号 `admin` / `admin123`。推送渠道在「设置 → 推送设置」里填写，会写入数据卷，不必写进镜像。勾选或取消渠道后要点「保存配置」才会生效。
-
-## 本机路径
-
-工程目录为 `D:\CURSOR\LouSentry`。截图在 `image/`，数据库在 `data/`（不进 Git）。
-
-## v1.0.01
-
-- 页脚展示版本号和 GitHub 项目地址
-- 推送设置按钮改为「保存配置」，保存成功后顶部提示「配置已保存」
-- 取消勾选渠道不会立刻生效，需再点「保存配置」
-
-
