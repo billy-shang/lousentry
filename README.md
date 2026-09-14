@@ -164,6 +164,34 @@ docker compose up -d
 docker run --rm -v lousentry-data:/data -v ${PWD}:/backup alpine tar czf /backup/lousentry-data.tgz -C /data .
 ```
 
+### 本机 WSL Docker（Ubuntu）
+
+Windows 上没有 Docker Desktop 时，用已在跑的 WSL Ubuntu 即可拉镜像、启动和发布：
+
+```powershell
+wsl -e sh -c "docker pull billyshang/lousentry:latest"
+wsl -e sh -c "docker run -d --name lousentry --restart unless-stopped -p 8080:8080 -v lousentry-data:/app/data billyshang/lousentry:latest"
+```
+
+或在 WSL 里进入仓库后用 compose：
+
+```bash
+cd /mnt/d/CURSOR/watchvuln
+docker compose up -d
+```
+
+浏览器访问 Windows 的 `http://127.0.0.1:8080`。数据在 Docker 卷 `lousentry-data`，不要把 SQLite 打进镜像。
+
+本机再构建并推到 Docker Hub（需先 `docker login`）：
+
+```bash
+cd /mnt/d/CURSOR/watchvuln
+docker build -t billyshang/lousentry:latest .
+docker push billyshang/lousentry:latest
+```
+
+打 git tag `v*.*.*` 推到 GitHub 后，Actions 也会自动构建并推送同一仓库。
+
 ### 自己构建
 
 ```powershell
