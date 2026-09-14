@@ -12,7 +12,7 @@ FROM golang:1.22-alpine AS builder
 WORKDIR /app
 COPY . .
 COPY --from=fe /web/dist /app/webui/dist
-RUN go env -w GOPROXY=https://goproxy.cn,direct
+RUN go env -w GOPROXY=https://goproxy.cn,https://proxy.golang.org,direct
 RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -extldflags=-static" -o main .
 
 
